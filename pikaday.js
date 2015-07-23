@@ -554,7 +554,14 @@
             } else {
                 opts.field.parentNode.insertBefore(self.el, opts.field.nextSibling);
             }
+
             addEvent(opts.field, 'change', self._onInputChange);
+
+            //addEvent(opts.field, 'keyup', self._onInputChange);
+
+            // addEvent(opts.field, 'keyup', function (){
+            //     console.log("keyup");
+            // });
 
             if (!opts.defaultDate) {
                 if (hasMoment && opts.field.value) {
@@ -660,8 +667,30 @@
          * return a formatted string of the current selection (using Moment.js if available)
          */
         toString: function(format)
-        {
-            return !isDate(this._d) ? '' : hasMoment ? moment(this._d).format(format || this._o.format) : this._d.toDateString();
+        {   
+            format = format || this._o.format || defaults.format;
+            return !isDate(this._d) ? '' : hasMoment ? moment(this._d).format(format) : this.toFormatDate(this._d, format);
+        },
+
+        toFormatDate: function(date, format){
+            format = format || 'YYYY-MM-DD';
+
+            var separate = format.replace(/[YMD]/gi, '')[0];
+            var order = format.replace(/[^YMD]/gi, '').replace(/Y+/gi, 'Y').replace(/M+/gi, 'M').replace(/D+/gi, 'D');
+            
+            var arr = {};
+            arr.Y = date.getFullYear();
+            arr.M = date.getMonth() + 1;
+            arr.D = date.getDate();
+
+            var dateStr = '';
+            for(var i = 0; i < order.length; i++){
+                dateStr = dateStr + arr[order.charAt(i)];
+                if(i < order.length-1){
+                dateStr = dateStr + separate;
+                }
+            }
+            return dateStr;
         },
 
         /**

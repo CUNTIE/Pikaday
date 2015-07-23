@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="../css/pikaday.css">
+	<!-- <link rel="stylesheet" href="../css/site.css">-->
+</head>
+<body>
+	<div class="example-container">
+		<p>Pikaday</p>
+		<div>
+			<input type="text" id="datepicker" value=""></div>
+		<pre>
+		var picker = new Pikaday({ 
+			field: document.getElementById('datepicker'),
+			format: 'YYYY/MM/DD'
+		});
+	</pre>
+	</div>
+</body>
+
+	<script src="../pikaday.js"></script>
+	<script>
+		var picker = new Pikaday({ 
+			field: document.getElementById('datepicker'),
+			format: 'YYYY/MM/DD'
+		});
+</script>
+
+</html>
