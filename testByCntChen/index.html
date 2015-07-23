@@ -9,19 +9,19 @@
 	<div class="example-container">
 		<p>Pikaday</p>
 		<div>
-			<input type="text" id="datepicker" value=""></div>
-		<pre>
-		var picker = new Pikaday({ 
-			field: document.getElementById('datepicker'),
-			format: 'YYYY/MM/DD'
-		});
-	</pre>
+			<input type="text" id="datepicker" value="2021/07/10"></div>
+		<textarea style="width:500px;height:300px;margin-top:40px;">
+var picker = new Pikaday({ 
+	field: document.getElementById('datepicker'),
+	format: 'YYYY/MM/DD'
+});
+	</textarea>
 	</div>
 </body>
 
 	<script src="../pikaday.js"></script>
 	<script>
-		var picker = new Pikaday({ 
+		var picker = new Pikaday({
 			field: document.getElementById('datepicker'),
 			format: 'YYYY/MM/DD'
 		});

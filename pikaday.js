@@ -419,7 +419,7 @@
 
             if (!hasClass(target.parentNode, 'is-disabled')) {
                 if (hasClass(target, 'pika-button') && !hasClass(target, 'is-empty')) {
-                    self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), target.getAttribute('data-pika-day')));
+                    self.setDateToField(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), target.getAttribute('data-pika-day')));
                     if (opts.bound) {
                         sto(function() {
                             self.hide();
@@ -480,6 +480,36 @@
             }
             if (isDate(date)) {
               self.setDate(date);
+            }
+            if (!self._v) {
+                self.show();
+            }
+        };
+
+        self._onInputKeyup = function(e)
+        {
+            if(e.keyCode == 13){
+                sto(function(){
+                    self.hide();
+                },100);
+                return;
+            }
+
+            var date;
+
+            if (e.firedBy === self) {
+                return;
+            }
+            if (hasMoment) {
+                date = moment(opts.field.value, opts.format);
+                date = (date && date.isValid()) ? date.toDate() : null;
+            }
+            else {
+                date = new Date(Date.parse(opts.field.value));
+            }
+            if (isDate(date)) {
+              self._d = new Date(date.getTime());
+              self.gotoDate(self._d);
             }
             if (!self._v) {
                 self.show();
@@ -556,12 +586,7 @@
             }
 
             addEvent(opts.field, 'change', self._onInputChange);
-
-            //addEvent(opts.field, 'keyup', self._onInputChange);
-
-            // addEvent(opts.field, 'keyup', function (){
-            //     console.log("keyup");
-            // });
+            addEvent(opts.field, 'keyup', self._onInputKeyup);
 
             if (!opts.defaultDate) {
                 if (hasMoment && opts.field.value) {
@@ -577,7 +602,7 @@
 
         if (isDate(defDate)) {
             if (opts.setDefaultDate) {
-                self.setDate(defDate, true);
+                self.setDate(defDate);
             } else {
                 self.gotoDate(defDate);
             }
@@ -674,7 +699,6 @@
 
         toFormatDate: function(date, format){
             format = format || 'YYYY-MM-DD';
-
             var separate = format.replace(/[YMD]/gi, '')[0];
             var order = format.replace(/[^YMD]/gi, '').replace(/Y+/gi, 'Y').replace(/M+/gi, 'M').replace(/D+/gi, 'D');
             
@@ -707,7 +731,7 @@
         setMoment: function(date, preventOnSelect)
         {
             if (hasMoment && moment.isMoment(date)) {
-                this.setDate(date.toDate(), preventOnSelect);
+                this.setDate(date.toDate());
             }
         },
 
@@ -722,7 +746,43 @@
         /**
          * set the current selection
          */
-        setDate: function(date, preventOnSelect)
+        setDate: function(date)
+        {
+            if (!date) {
+                this._d = null;
+
+                if (this._o.field) {
+                    this._o.field.value = '';
+                    fireEvent(this._o.field, 'change', { firedBy: this });
+                }
+
+                return this.draw();
+            }
+            if (typeof date === 'string') {
+                date = new Date(Date.parse(date));
+            }
+            if (!isDate(date)) {
+                return;
+            }
+
+            var min = this._o.minDate,
+                max = this._o.maxDate;
+
+            if (isDate(min) && date < min) {
+                date = min;
+            } else if (isDate(max) && date > max) {
+                date = max;
+            }
+
+            this._d = new Date(date.getTime());
+            setToStartOfDay(this._d);
+            this.gotoDate(this._d);
+        },
+
+        /**
+         * set the current selection and update field value
+         */
+        setDateToField: function(date, preventOnSelect)
         {
             if (!date) {
                 this._d = null;
@@ -884,6 +944,7 @@
             if (!this._v && !force) {
                 return;
             }
+
             var opts = this._o,
                 minYear = opts.minYear,
                 maxYear = opts.maxYear,
