@@ -23,8 +23,10 @@ var picker = new Pikaday({
 	<script>
 		var picker = new Pikaday({
 			field: document.getElementById('datepicker'),
-			format: 'YYYY/MM/DD'
+			format: 'YYYY/MM/DD',
+			showWeekNumber:true
 		});
+		console.log(picker.show());
 </script>
 
 </html>

@@ -626,8 +626,6 @@
      * public Pikaday API
      */
     Pikaday.prototype = {
-
-
         /**
          * configure functionality
          */
@@ -697,8 +695,16 @@
             return !isDate(this._d) ? '' : hasMoment ? moment(this._d).format(format) : this.toFormatDate(this._d, format);
         },
 
+        /*
+         *
+         */
         toFormatDate: function(date, format){
+            if(!isDate(date)){
+                return '';
+            }
+
             format = format || 'YYYY-MM-DD';
+
             var separate = format.replace(/[YMD]/gi, '')[0];
             var order = format.replace(/[^YMD]/gi, '').replace(/Y+/gi, 'Y').replace(/M+/gi, 'M').replace(/D+/gi, 'D');
             
